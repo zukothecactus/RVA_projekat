@@ -1,0 +1,143 @@
+﻿<Window x:Class="Komponenta1.View.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+        xmlns:vm="clr-namespace:Komponenta1.ViewModel"
+        mc:Ignorable="d"
+        Title="Upravljanje Konferencijama" Height="700" Width="1000">
+
+    <!-- Postavljanje ViewModel-a kao DataContext prozora -->
+    <Window.DataContext>
+        <vm:GlavniViewModel/>
+    </Window.DataContext>
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Margin="0,0,10,0">
+            <StackPanel>
+
+                <GroupBox Header="Unos nove konferencije">
+                    <StackPanel Margin="5">
+                        <TextBlock Text="Naziv konferencije:" Margin="0,5,0,2"/>
+                        <TextBox Text="{Binding NovaKonferencija.Naziv, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" Padding="2"/>
+
+                        <TextBlock Text="Naučna oblast:" Margin="0,10,0,2"/>
+                        <TextBox Text="{Binding NovaKonferencija.Oblast, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" Padding="2"/>
+
+                        <TextBlock Text="Grad:" Margin="0,10,0,2"/>
+                        <TextBox Text="{Binding NovaKonferencija.Grad, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" Padding="2"/>
+
+                        <Button Content="Dodaj Konferenciju" Command="{Binding KomandaDodajKonferenciju}" Margin="0,15,0,0" Padding="5" Background="#e0e0e0"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Unos nove statistike (Metrika)" Margin="0,15,0,0">
+                    <StackPanel Margin="5">
+
+                        <TextBlock Text="Konferencija:" Margin="0,5,0,2"/>
+                        <ComboBox ItemsSource="{Binding SveKonferencije}" 
+                              DisplayMemberPath="Naziv" 
+                              SelectedValuePath="Id" 
+                              SelectedValue="{Binding NovaStatistika.KonferencijaId, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/>
+
+                        <TextBlock Text="Datum održavanja:" Margin="0,10,0,2"/>
+                        <DatePicker SelectedDate="{Binding NovaStatistika.DatumOdrzavanja, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <TextBlock Text="Broj radova:" Margin="0,10,0,2"/>
+                        <TextBox Text="{Binding NovaStatistika.BrojRadova, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" Padding="2"/>
+
+                        <TextBlock Text="Broj sesija:" Margin="0,10,0,2"/>
+                        <TextBox Text="{Binding NovaStatistika.BrojSesija, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}" Padding="2"/>
+
+                        <Button Content="Dodaj Statistiku" Command="{Binding KomandaDodajStatistiku}" Margin="0,15,0,0" Padding="5" Background="#e0e0e0"/>
+                    </StackPanel>
+                </GroupBox>
+
+            </StackPanel>
+        </ScrollViewer>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="250"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                <Button Content="Sačuvaj Podatke" Command="{Binding KomandaSacuvaj}" Margin="0,0,10,0" Padding="10,5"/>
+                <Button Content="Undo" Command="{Binding KomandaPonisti}" Margin="0,0,5,0" Padding="10,5"/>
+                <Button Content="Redo" Command="{Binding KomandaPonovi}" Margin="0,0,20,0" Padding="10,5"/>
+
+                <TextBlock Text="Pretraga:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <TextBox Width="200" Text="{Binding TekstPretrageKonferencija, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Padding="2"/>
+                <TextBlock Text="Pretraga konferencija:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <TextBox Width="120" Text="{Binding TekstPretrageKonferencija, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Padding="2" Margin="0,0,10,0"/>
+
+                <TextBlock Text="Pretraga statistike:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <TextBox Width="120" Text="{Binding TekstPretrageStatistika, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Padding="2"/>
+            </StackPanel>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <GroupBox Grid.Column="0" Header="Konferencije (Subjekt)">
+                    <DataGrid ItemsSource="{Binding PrikazaneKonferencije}" AutoGenerateColumns="False" CanUserAddRows="False" Margin="5">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Naziv" Binding="{Binding Naziv}" Width="*"/>
+                            <DataGridTextColumn Header="Oblast" Binding="{Binding Oblast}" Width="*"/>
+                            <DataGridTextColumn Header="Grad" Binding="{Binding Grad}" Width="*"/>
+                            <DataGridTemplateColumn Header="Akcije">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Obriši" 
+                                            Command="{Binding DataContext.KomandaObrisiKonferenciju, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                            CommandParameter="{Binding}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </GroupBox>
+
+                <GroupBox Grid.Column="2" Header="Statistike (Metrika - State Pattern)">
+                    <DataGrid ItemsSource="{Binding PrikazaneStatistike}" AutoGenerateColumns="False" CanUserAddRows="False" Margin="5">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Datum" Binding="{Binding DatumOdrzavanja, StringFormat=d}" Width="*"/>
+                            <DataGridTextColumn Header="Radovi" Binding="{Binding BrojRadova}" Width="50"/>
+                            <DataGridTextColumn Header="Sesije" Binding="{Binding BrojSesija}" Width="50"/>
+                            <DataGridTextColumn Header="Trenutni Status" Binding="{Binding Status}" Width="*"/>
+
+                            <DataGridTemplateColumn Header="Akcije (State / Command)">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button Content="Simuliraj" 
+                                Command="{Binding DataContext.KomandaSimulirajStanje, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                CommandParameter="{Binding}" Margin="0,0,5,0"/>
+                                            <Button Content="Obriši" 
+                                Command="{Binding DataContext.KomandaObrisiStatistiku, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                CommandParameter="{Binding}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </GroupBox>
+            </Grid>
+
+            <GroupBox Grid.Row="2" Header="Prikaz stanja konferencija u realnom vremenu (Observer)" Margin="0,10,0,0">
+                <lvc:PieChart Series="{Binding SerijeGrafikona}" LegendPosition="Right"/>
+            </GroupBox>
+        </Grid>
+    </Grid>
+</Window>
