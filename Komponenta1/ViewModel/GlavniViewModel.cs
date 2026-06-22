@@ -15,6 +15,7 @@ namespace Komponenta1.ViewModel
     //spajamo sve slojeve lol
     public class GlavniViewModel: BazniModel
     {
+        public static GlavniViewModel Instanca { get; private set; }
         // servisi i menadzeri 
         private readonly IServisPerzistencije _servisPerzistencije;
         private readonly MenadzerKomandi _menadzerKomandi;
@@ -125,6 +126,7 @@ namespace Komponenta1.ViewModel
 
         public GlavniViewModel()
         {
+            Instanca = this;
             // Inicijalizacija servisa
             _servisPerzistencije = new JsonServisPerzistencije();
             _menadzerKomandi = new MenadzerKomandi();
