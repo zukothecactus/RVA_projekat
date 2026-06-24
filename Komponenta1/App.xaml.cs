@@ -41,7 +41,7 @@ namespace Komponenta1
                             {
                                 builder.AddService<StatistikaServis>();
                                 builder.AddServiceEndpoint<StatistikaServis, IStatistikaServis>(
-                                    new CoreWCF.NetTcpBinding(),
+                                    new CoreWCF.NetTcpBinding(CoreWCF.SecurityMode.None),
                                     "net.tcp://localhost:8080/StatistikaServis");
                             });
                         });

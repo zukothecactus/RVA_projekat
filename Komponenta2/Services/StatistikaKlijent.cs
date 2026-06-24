@@ -6,19 +6,20 @@ using Ugovori;
 namespace Komponenta2.Services
 {
     /// <summary>
-    /// WCF klijent koji preko BasicHttpBinding-a komunicira sa servisom Komponente 1.
+    /// WCF klijent koji preko NetTcpBinding-a komunicira sa servisom Komponente 1.
     /// Implementira isti ugovor (IStatistikaServis) kao i lokalni izvor.
     /// </summary>
     public class StatistikaKlijent : IStatistikaServis, IDisposable
     {
-        public const string PODRAZUMEVANA_ADRESA = "http://localhost:8733/StatistikaServis";
-        // PLACEHOLDER — uskladiti sa hostom Komponente 1 pri integraciji.
+        public const string PODRAZUMEVANA_ADRESA = "net.tcp://localhost:8080/StatistikaServis";
+        // Usklađeno sa hostom Komponente 1 (CoreWCF NetTcp na portu 8080).
 
         private readonly ChannelFactory<IStatistikaServis> _fabrika;
 
         public StatistikaKlijent(string adresa = PODRAZUMEVANA_ADRESA)
         {
-            var binding = new BasicHttpBinding
+            // SecurityMode.None je obavezno jer K1 host mora da koristi isti režim — uskladiti sa kolegom.
+            var binding = new NetTcpBinding(SecurityMode.None)
             {
                 OpenTimeout = TimeSpan.FromSeconds(5),
                 SendTimeout = TimeSpan.FromSeconds(5),
